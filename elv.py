@@ -65,6 +65,22 @@ def checkCollectReward():
         pyautogui.sleep(0.5)
 
 
+def nextPage():
+    nextPageLocation = pyautogui.locateOnScreen(img("nextpage.bmp"))
+    lastPageLocation = pyautogui.locateOnScreen(img("lastpage.bmp"))
+
+    if lastPageLocation or not nextPageLocation:
+        return False
+
+    print("Next page")
+
+    pyautogui.click(nextPageLocation.left + 1, nextPageLocation.top + 1)
+    pyautogui.sleep(0.5)
+    pyautogui.moveTo(nextPageLocation.left - 10, nextPageLocation.top + 1)
+
+    return True
+
+
 def main():
     keepPaging = True
     while keepPaging:
@@ -79,18 +95,7 @@ def main():
 
             checkCollectReward()
 
-        nextPageLocation = pyautogui.locateOnScreen(img("nextpage.bmp"))
-        lastPageLocation = pyautogui.locateOnScreen(img("lastpage.bmp"))
-
-        if lastPageLocation or not nextPageLocation:
-            keepPaging = False
-            break
-
-        print("Next page")
-
-        pyautogui.click(nextPageLocation.left + 1, nextPageLocation.top + 1)
-        pyautogui.sleep(0.5)
-        pyautogui.moveTo(nextPageLocation.left - 10, nextPageLocation.top + 1)
+        keepPaging = nextPage()
 
 
 main()
