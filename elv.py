@@ -7,23 +7,21 @@ def main():
         buttonTop = 0
         keepLooking = True
         while keepLooking:
-
             # find a neighborly help button (either normal or golden), and click it
-            helpLocation = pyautogui.locateOnScreen("help.bmp", region=(0, buttonTop, 1920, 1100))
+            greenLocation = pyautogui.locateOnScreen("help.bmp", region=(0, buttonTop, 1920, 1100))
             goldLocation = pyautogui.locateOnScreen("gold.bmp", region=(0, buttonTop, 1920, 1100))
 
-            if helpLocation and goldLocation:
-                buttonTop = min(helpLocation.top, goldLocation.top) + 1
-                buttonLeft = helpLocation.left
-            elif helpLocation:
-                buttonTop = helpLocation.top + 1
-                buttonLeft = helpLocation.left
-            elif goldLocation:
-                buttonTop = goldLocation.top + 1
-                buttonLeft = goldLocation.left
-            else:
+            if not greenLocation and not goldLocation:
                 keepLooking = False
                 break
+
+            greenTop = greenLocation.top if greenLocation else 10000
+            goldTop = goldLocation.top if goldLocation else 10000
+
+            helpLocation = greenLocation if greenTop < goldTop else goldLocation
+
+            buttonTop = helpLocation.top + 1
+            buttonLeft = helpLocation.left
 
             print(f"Found at {buttonTop}")
 
@@ -41,6 +39,16 @@ def main():
 
             pyautogui.sleep(0.7)
 
+            # check if some reward is available
+            rewardLocation = pyautogui.locateOnScreen("reward.bmp")
+            if rewardLocation:
+                pyautogui.click(
+                    rewardLocation.left + 10,
+                    rewardLocation.top + rewardLocation.height - 10,
+                )
+                pyautogui.sleep(0.5)
+
+            # check if already helper
             alreadyHelpedLocation = pyautogui.locateOnScreen("alreadyhelped.bmp")
             if alreadyHelpedLocation:
                 pyautogui.click(
