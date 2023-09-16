@@ -25,7 +25,7 @@ def clickHelpButton(buttonTop):
     print(f"Found at {buttonTop}")
 
     pyautogui.click(buttonLeft + 1, buttonTop + 1)
-    pyautogui.sleep(0.5)
+    pyautogui.sleep(0.2)
 
     return (True, buttonTop)
 
