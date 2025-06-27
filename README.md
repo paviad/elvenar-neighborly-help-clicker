@@ -9,7 +9,7 @@
 
 Position a `cmd.exe` window such that the neighborly help buttons of the game are visible, then run `py elv.py`.
 
-**Note:** if you have multiple monitors, the `cmd.exe` window must be on the same monitor as the game window.
+**Note:** if you have multiple monitors, the script will work on "Display #1"
 
 It will click them one by one providing help in this order:
 1. Builders
@@ -20,7 +20,7 @@ It will automatically go to the next page when done with a page, and will end wh
 
 ## Troubleshooting
 
-If the script fails and stops running, you can simply restart it, just remember to ensure that `cmd.exe` window is on the same monitor as the game window and that the neighborly help buttons are visible when the script starts.
+If the script fails and stops running, you can simply restart it, just remember it looks for the game window on "Display #1". Also make sure that the neighborly help buttons are visible when the script starts.
 
 ## Windows Desktop Shortcut
 
