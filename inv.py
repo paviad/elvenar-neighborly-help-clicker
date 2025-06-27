@@ -2,6 +2,7 @@ from PIL import Image, ImageChops
 
 import os
 import pyautogui
+from pyscreeze import Box
 import pytesseract
 
 
@@ -9,11 +10,39 @@ def img(path):
     return os.path.join("images", path)
 
 
-def find(diff):
-    for x in reversed(range(0, 1920)):
-        for y in range(0, 1080):
-            if diff.getpixel((x, y)) != (0, 0, 0):
-                return (x, y)
+def find(diff, region, buttonLeft, buttonTop):
+    x = (buttonLeft - region.left) + 152
+    y = buttonTop - region.top
+    while y >= 0:
+        if diff.getpixel((x, y)) == (0, 0, 0):
+            break
+        y -= 1
+
+    y += 7
+
+    x -= 1
+    while x >= 0:
+        if diff.getpixel((x, y)) == (0, 0, 0):
+            break
+        x -= 1
+
+    x += 1
+    y -= 6
+
+    blx = x + 10
+    bly = y + 10
+
+    while blx < diff.width:
+        if diff.getpixel((blx, y + 10)) == (0, 0, 0):
+            break
+        blx += 1
+
+    while bly < diff.height:
+        if diff.getpixel((x + 10, bly)) == (0, 0, 0):
+            break
+        bly += 1
+
+    return (x, y, blx, bly)
 
 
 def nextPage():
@@ -25,14 +54,16 @@ def nextPage():
 
     print("Next page")
 
-    pyautogui.click(nextPageLocation.left + 1, nextPageLocation.top + 1)
-    # pyautogui.sleep(0.1)
+    pyautogui.click(nextPageLocation.left + 4, nextPageLocation.top + 4)
+    pyautogui.sleep(0.1)
     pyautogui.moveTo(nextPageLocation.left - 10, nextPageLocation.top + 1)
 
     return True
 
 
 def main():
+    pyautogui.useImageNotFoundException(False)
+
     pytesseract.pytesseract.tesseract_cmd = r"c:\program files\tesseract-ocr\tesseract.exe"  # need to install tesseract
 
     pyautogui.moveTo(200, 200)
@@ -51,9 +82,13 @@ def main():
     page = 1
 
     keepPaging = True
+
+    regionOfInterest = Box(0, 0, 1920, 1080)  # region of the screen to take screenshots
+
     while keepPaging:
 
-        ss1 = pyautogui.screenshot(region=(0, 0, 1920, 1080))
+        pyautogui.sleep(1.0)
+        ss1 = pyautogui.screenshot(region=regionOfInterest)
         print("took")
 
         for y in range(0, 2):
@@ -66,15 +101,20 @@ def main():
                 pyautogui.moveTo(buttonLeft, buttonTop)
                 # pyautogui.sleep(0.1)
                 pyautogui.moveTo(buttonLeft + 1, buttonTop)
-                # pyautogui.sleep(0.1)
-                ss2 = pyautogui.screenshot(region=(0, 0, 1920, 1080))
+                pyautogui.sleep(1.0)
+                ss2 = pyautogui.screenshot(region=regionOfInterest)
+                # ss2.save(f"page{page}_button{x}_{y}_after.png")
                 diff = ImageChops.difference(ss1, ss2)
-                (tx, ty) = find(diff)
-                imga = ss2.crop(box=(tx - 505, ty, tx - 40, ty + 25))
+                # diff.save(f"page{page}_button{x}_{y}_diff.png")
+                (dLeft, dTop, dRight, dBottom) = find(diff, regionOfInterest, buttonLeft, buttonTop)
+                imga = ss2.crop(box=(dLeft + 9, dTop + 8, dLeft + 449, dTop + 24))
+                # imga.save(f"page{page}_button{x}_{y}.png")
                 txt = pytesseract.image_to_string(imga)
+                txt = txt.strip()
                 print(txt)
                 # pyautogui.sleep(0.1)
                 file1.write(f'{page},"{txt}"' + "\n")
+                file1.flush()
 
         keepPaging = nextPage()
         page = page + 1
