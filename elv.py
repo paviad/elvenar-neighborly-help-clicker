@@ -39,6 +39,7 @@ def clickHelpButton(buttonTop):
     print(f"Found at {buttonTop}")
 
     pyautogui.click(buttonLeft + 1, buttonTop + 1)
+    pyautogui.moveRel(-100, 0)
     pyautogui.sleep(0.1)
     print("10")
 
@@ -49,7 +50,7 @@ def clickHelpButton(buttonTop):
 def clickContribButton():
     pyautogui.screenshot("test.png")
 
-    mainhallLocation = pyautogui.locateOnScreen(img("mainhall.bmp"), minSearchTime=0.1, confidence=0.9)
+    mainhallLocation = pyautogui.locateOnScreen(img("mainhall.bmp"), minSearchTime=1, confidence=0.9)
     cultureLocation = None
     bldrLocation = None
 
@@ -91,7 +92,7 @@ def clickContribButton():
 
 # check if some reward is available
 def checkCollectReward():
-    rewardLocation = pyautogui.locateOnScreen(img("reward.bmp"), minSearchTime=0.1, confidence=0.9)
+    rewardLocation = pyautogui.locateOnScreen(img("reward.bmp"), minSearchTime=1, confidence=0.9)
     if rewardLocation:
         pyautogui.click(
             rewardLocation.left + 10,
@@ -134,7 +135,7 @@ def main():
             clickContribButton()
 
             print("d")
-            checkCollectReward()
+            # checkCollectReward()
             print("e")
 
         print("I")
